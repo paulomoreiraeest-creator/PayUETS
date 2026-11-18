@@ -1,56 +1,29 @@
-# Welcome to your Expo app 👋
+# PayUETS: Billetera Digital Escolar
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Problema
+Las largas filas y demoras en los pagos de los bares del colegio debido al uso exclusivo de efectivo, además de la falta de un sistema digital accesible para gestionar pequeños presupuestos o realizar préstamos rápidos entre compañeros.
 
-## Get started
+## Solución
+Permitirá realizar pagos digitales simulados en los 3 bares del colegio usando una moneda virtual interna, gestionar recargas locales en la papelería, transferir saldo de forma instantánea entre un directorio de compañeros y aplicar cupones de descuentos obtenidos mediante retos académicos.
 
-1. Install dependencies
+## Objetivos
+- Desarrollar un prototipo de aplicación móvil para optimizar el proceso de compra en los bares escolares.
+- Implementar un sistema de autenticación por correo institucional y transferencias P2P entre estudiantes.
+- Integrar un módulo gamificado de retos académicos para desbloquear cupones y ofertas en los puntos de consumo.
 
-   ```bash
-   npm install
-   ```
+## Habilidades
+- React Native con Expo y TypeScript
+- Componentes reutilizables y props tipadas
+- Estado local y hooks (useState / custom hooks)
+- Navegación entre pantallas y diseño adaptable con temas claro y oscuro
 
-2. Start the app
+## Alcance inicial
+Pantalla de login institucional con validación de correo.
+Billetera digital local con saldo en monedas y dólares.
+Menús interactivos de los 3 bares del colegio con carrito de compras y opción para canjear cupones.
+Sistema de recargas locales simuladas y transferencias P2P entre un directorio de compañeros.
+Historial con tickets digitales y retos académicos semanales.
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Restricciones
+- Funcionará como un prototipo local sin bases de datos en la nube ni pasarelas de pago bancarias reales.
+- La sesión y el intercambio de datos se gestionarán directamente en la memoria del dispositivo para fines de demostración escolar.
