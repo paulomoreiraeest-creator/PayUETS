@@ -1,20 +1,29 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useBilletera } from '../hooks/useBilletera';
-import { Display } from '../componentes/Display';
+import { useState } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Boton } from '../componentes/Boton';
+import { Display } from '../componentes/Display';
+import { useBilletera } from '../hooks/useBilletera';
 
 export default function WalletScreen() {
-  const { usuarioActivo, companeros, recargarLocal, transferirP2P, cerrarSesion } = useBilletera();
+  const {
+    usuarioActivo,
+    companeros,
+    recargarLocal,
+    transferirP2P,
+    cerrarSesion,
+    tema,
+    esOscuro,
+    alternarTema,
+  } = useBilletera();
   const router = useRouter();
   const [mensaje, setMensaje] = useState<string | null>(null);
 
   if (!usuarioActivo) {
     return (
-      <View style={styles.centerContainer}>
-        <Text style={styles.aviso}>No hay una sesión activa.</Text>
-        <Boton titulo="Ir al Login" onPress={() => router.replace('/')} />
+      <View style={[styles.centerContainer, { backgroundColor: tema.background }]}>
+        <Text style={[styles.aviso, { color: tema.text }]}>No hay sesión activa.</Text>
+        <Boton titulo="Ir al Login" onPress={() => router.replace('/')} colorFondo={tema.primary} />
       </View>
     );
   }
@@ -39,13 +48,24 @@ export default function WalletScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: tema.background }]}>
       <View style={styles.header}>
-        <View>
-          <Text style={styles.bienvenida}>Hola, {usuarioActivo.nombre}</Text>
-          <Text style={styles.email}>{usuarioActivo.email}</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.bienvenida, { color: tema.text }]}>Hola, {usuarioActivo.nombre}</Text>
+          <Text style={[styles.email, { color: tema.subtext }]}>{usuarioActivo.email}</Text>
         </View>
-        <Boton titulo="Salir" onPress={handleSalir} colorFondo="#EF4444" />
+
+        <View style={styles.headerBotones}>
+          <TouchableOpacity
+            style={[styles.botonTema, { backgroundColor: tema.card, borderColor: tema.border }]}
+            onPress={alternarTema}
+          >
+            <Text style={{ color: tema.text, fontWeight: '700', fontSize: 13 }}>
+              {esOscuro ? '☀️ Claro' : '🌙 Oscuro'}
+            </Text>
+          </TouchableOpacity>
+          <Boton titulo="Salir" onPress={handleSalir} colorFondo={tema.error} />
+        </View>
       </View>
 
       <Display
@@ -53,24 +73,53 @@ export default function WalletScreen() {
         valor={`${usuarioActivo.saldo} monedas ($${(usuarioActivo.saldo / 100).toFixed(2)})`}
       />
 
-      {mensaje && <Text style={styles.mensaje}>{mensaje}</Text>}
+      {mensaje && <Text style={[styles.mensaje, { color: tema.primary }]}>{mensaje}</Text>}
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Puntos de Consumo</Text>
-        <Boton titulo="Ir a Bares UETS" onPress={() => router.push('/bares')} />
+        <Text style={[styles.sectionTitle, { color: tema.text }]}>
+          Cupones Disponibles ({usuarioActivo.cupones.length})
+        </Text>
+        {usuarioActivo.cupones.length === 0 ? (
+          <Text style={{ color: tema.subtext, fontSize: 14 }}>
+            No tienes cupones activos. Gánalos en la pestaña Retos.
+          </Text>
+        ) : (
+          usuarioActivo.cupones.map((cupon) => (
+            <View
+              key={cupon.id}
+              style={[styles.cuponCard, { backgroundColor: tema.card, borderColor: tema.border }]}
+            >
+              <Text style={{ color: tema.secondary, fontWeight: '700' }}>
+                🎟️ {cupon.codigo} (-{cupon.descuentoPorcentaje}%)
+              </Text>
+              <Text style={{ color: tema.subtext, fontSize: 13 }}>{cupon.descripcion}</Text>
+            </View>
+          ))
+        )}
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Simular Recarga Local</Text>
-        <Boton titulo="Recargar 100 monedas ($1.00)" onPress={handleRecarga} colorFondo="#10B981" />
+        <Text style={[styles.sectionTitle, { color: tema.text }]}>Simular Recarga Local</Text>
+        <Boton
+          titulo="Recargar 100 monedas ($1.00)"
+          onPress={handleRecarga}
+          colorFondo={tema.secondary}
+        />
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Transferencias P2P a Compañeros</Text>
+        <Text style={[styles.sectionTitle, { color: tema.text }]}>Transferencias P2P a Compañeros</Text>
         {companeros.map((comp) => (
-          <View key={comp.email} style={styles.row}>
-            <Text style={styles.compText}>{comp.nombre}</Text>
-            <Boton titulo="Enviar 50 🪙" onPress={() => handleTransferencia(comp.email)} />
+          <View
+            key={comp.email}
+            style={[styles.row, { backgroundColor: tema.card, borderColor: tema.border }]}
+          >
+            <Text style={[styles.compText, { color: tema.text }]}>{comp.nombre}</Text>
+            <Boton
+              titulo="Enviar 50 🪙"
+              onPress={() => handleTransferencia(comp.email)}
+              colorFondo={tema.primary}
+            />
           </View>
         ))}
       </View>
@@ -79,15 +128,18 @@ export default function WalletScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: '#F9FAFB', flexGrow: 1 },
-  centerContainer: { flex: 1, justifyContent: 'center', padding: 24, backgroundColor: '#F9FAFB' },
-  aviso: { fontSize: 16, color: '#374151', textAlign: 'center', marginBottom: 12 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 },
-  bienvenida: { fontSize: 24, fontWeight: 'bold', color: '#1F2937' },
-  email: { fontSize: 14, color: '#6B7280' },
-  section: { marginTop: 20 },
-  sectionTitle: { fontSize: 18, fontWeight: '600', color: '#374151', marginBottom: 10 },
-  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#FFF', padding: 12, borderRadius: 10, marginBottom: 8, borderWidth: 1, borderColor: '#E5E7EB' },
-  compText: { fontSize: 16, color: '#1F2937' },
-  mensaje: { color: '#4F46E5', fontWeight: '600', marginVertical: 8, textAlign: 'center' },
+  container: { padding: 20, flexGrow: 1 },
+  centerContainer: { flex: 1, justifyContent: 'center', padding: 24 },
+  aviso: { fontSize: 16, textAlign: 'center', marginBottom: 12 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, gap: 8 },
+  headerBotones: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  botonTema: { paddingVertical: 10, paddingHorizontal: 12, borderRadius: 12, borderWidth: 1 },
+  bienvenida: { fontSize: 22, fontWeight: 'bold' },
+  email: { fontSize: 13 },
+  section: { marginTop: 22 },
+  sectionTitle: { fontSize: 18, fontWeight: '600', marginBottom: 10 },
+  cuponCard: { padding: 12, borderRadius: 10, borderWidth: 1, marginBottom: 8 },
+  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 12, borderRadius: 10, marginBottom: 8, borderWidth: 1 },
+  compText: { fontSize: 16 },
+  mensaje: { fontWeight: '600', marginVertical: 8, textAlign: 'center' },
 });
